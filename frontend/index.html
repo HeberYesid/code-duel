@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Code Duel - Plataforma de duelos de programación en tiempo real">
+    <title>Code Duel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Auth View -->
+    <div id="auth-view" class="view active">
+        <div class="auth-container">
+            <div class="auth-brand">
+                <div class="brand-icon">
+                    <span class="icon-left">&lt;</span>
+                    <span class="icon-slash">/</span>
+                    <span class="icon-right">&gt;</span>
+                </div>
+                <h1>Code<span class="brand-accent">Duel</span></h1>
+                <p class="brand-tagline">Compete. Code. Conquer.</p>
+            </div>
+
+            <div class="auth-card">
+                <!-- Tab Switcher -->
+                <div class="auth-tabs">
+                    <button id="tab-login" class="auth-tab active" onclick="switchTab('login')">Login</button>
+                    <button id="tab-register" class="auth-tab" onclick="switchTab('register')">Register</button>
+                    <div class="tab-indicator" id="tab-indicator"></div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" placeholder="Enter your username" required autocomplete="username" minlength="3" maxlength="50" pattern="[A-Za-z0-9_]+" title="3-50 characters. Letters, numbers and underscores only.">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password" minlength="6" maxlength="100">
+                    </div>
+                    <button type="submit" id="login-btn" class="btn-primary">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loader" style="display:none;"></span>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" placeholder="Choose a username" required autocomplete="username" minlength="3" maxlength="50" pattern="[A-Za-z0-9_]+" title="3-50 characters. Letters, numbers and underscores only.">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" placeholder="you@example.com" required autocomplete="email" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" placeholder="Min. 6 characters" required autocomplete="new-password" minlength="6" maxlength="100" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+" title="Include uppercase, lowercase, and a number.">
+                    </div>
+                    <button type="submit" id="register-btn" class="btn-primary">
+                        <span class="btn-text">Create Account</span>
+                        <span class="btn-loader" style="display:none;"></span>
+                    </button>
+                </form>
+
+                <!-- Error/Success messages -->
+                <div id="auth-message" class="auth-message" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard View (placeholder for after login) -->
+    <div id="dashboard-view" class="view">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="nav-icon">&lt;/&gt;</span>
+                <span class="nav-title">Code<span class="brand-accent">Duel</span></span>
+            </div>
+            <div class="nav-user">
+                <span id="nav-username" class="nav-username"></span>
+                <button id="logout-btn" class="btn-ghost" onclick="handleLogout()">Logout</button>
+            </div>
+        </nav>
+        <main class="dashboard-content">
+            <div class="welcome-card">
+                <h2>Welcome, <span id="welcome-username"></span>! 🎉</h2>
+                <p>Your account has been set up successfully. The arena is being prepared...</p>
+                <div class="coming-soon">
+                    <div class="pulse-dot"></div>
+                    <span>Matchmaking & Challenges coming in Phase 2</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
