@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: code-duel-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/codeduel
+    username: postgres
+    password: password # Cámbialo si es necesario
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400000 # 24 hours en milisegundos
+
+server:
+  port: 8080
