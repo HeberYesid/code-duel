@@ -13,6 +13,10 @@ function navigateTo(viewName) {
         const username = api.getUsername();
         document.getElementById('nav-username').textContent = username;
         document.getElementById('welcome-username').textContent = username;
+        
+        // Load challenges when dashboard is opened
+        challengesApp.init();
+        challengesApp.loadChallenges();
     }
 }
 

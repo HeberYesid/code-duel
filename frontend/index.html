@@ -86,13 +86,28 @@
                 <button id="logout-btn" class="btn-ghost" onclick="handleLogout()">Logout</button>
             </div>
         </nav>
-        <main class="dashboard-content">
-            <div class="welcome-card">
+        <main class="dashboard-content" id="dashboard-main">
+            <div class="dashboard-header">
                 <h2>Welcome, <span id="welcome-username"></span>! 🎉</h2>
-                <p>Your account has been set up successfully. The arena is being prepared...</p>
-                <div class="coming-soon">
-                    <div class="pulse-dot"></div>
-                    <span>Matchmaking & Challenges coming in Phase 2</span>
+                <p>Select a challenge to start coding or join the matchmaking queue.</p>
+            </div>
+            
+            <div class="challenges-section">
+                <div class="section-header">
+                    <h3>Available Challenges</h3>
+                    <div class="filter-group">
+                        <label for="difficulty-filter">Difficulty:</label>
+                        <select id="difficulty-filter" class="form-select">
+                            <option value="">All</option>
+                            <option value="EASY">Easy</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HARD">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="challenges-grid" class="challenges-grid">
+                    <!-- Challenges will be injected here -->
                 </div>
             </div>
         </main>
@@ -100,6 +115,7 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/challenges.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
