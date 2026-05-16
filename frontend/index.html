@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
 </head>
 <body>
     <!-- Auth View -->
@@ -113,9 +114,50 @@
         </main>
     </div>
 
+    <!-- Practice View -->
+    <div id="practice-view" class="view">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <button class="btn-back" onclick="practiceApp.goBack()">
+                    ← Back
+                </button>
+                <span class="nav-icon">&lt;/&gt;</span>
+                <span class="nav-title">Code<span class="brand-accent">Duel</span></span>
+            </div>
+            <div class="nav-user">
+                <span class="nav-practice-label">Practice Mode</span>
+            </div>
+        </nav>
+
+        <main class="practice-layout">
+            <!-- Left: Challenge Info -->
+            <section class="practice-panel practice-info-panel">
+                <div id="practice-challenge-info"></div>
+            </section>
+
+            <!-- Right: Editor + Actions -->
+            <section class="practice-panel practice-editor-panel">
+                <div class="editor-toolbar">
+                    <span class="editor-lang-label">🐍 Python</span>
+                    <button id="practice-submit-btn" class="btn-run" onclick="practiceApp.submit()">
+                        ▶ Run Code
+                    </button>
+                </div>
+                <div id="editor-container" class="editor-container"></div>
+            </section>
+
+            <!-- Bottom: Results -->
+            <section class="practice-panel practice-results-panel">
+                <div id="practice-results"></div>
+            </section>
+        </main>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/challenges.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/practice.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
