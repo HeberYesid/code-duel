@@ -1,6 +1,7 @@
 package com.codeduel.backend.config;
 
 import com.codeduel.backend.security.StompPrincipal;
+import com.codeduel.backend.service.DuelService;
 import com.codeduel.backend.service.MatchmakingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import java.security.Principal;
 public class WebSocketEventListener {
 
     private final MatchmakingService matchmakingService;
+    private final DuelService duelService;
 
     @EventListener
     public void handleSessionConnect(SessionConnectEvent event) {
@@ -36,6 +38,7 @@ public class WebSocketEventListener {
         if (principal instanceof StompPrincipal user) {
             String sessionId = accessor.getSessionId();
             matchmakingService.registerSession(sessionId, user.getUserId(), user.getUsername());
+            duelService.handlePlayerReconnect(user.getUserId());
             log.info("WebSocket connected: {} (session: {})", user.getUsername(), sessionId);
         }
     }
@@ -47,5 +50,11 @@ public class WebSocketEventListener {
 
         log.info("WebSocket disconnected (session: {})", sessionId);
         matchmakingService.handleDisconnect(sessionId);
+
+        // Also notify DuelService for active duel disconnect handling
+        Principal principal = accessor.getUser();
+        if (principal instanceof StompPrincipal user) {
+            duelService.handlePlayerDisconnect(user.getUserId());
+        }
     }
 }

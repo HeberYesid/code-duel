@@ -1,6 +1,6 @@
 package com.codeduel.backend.service;
 
-import com.codeduel.backend.dto.MatchFoundMessage;
+
 import com.codeduel.backend.model.enums.DifficultyLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +30,7 @@ public class MatchmakingService {
 
     private final WaitingRoom waitingRoom;
     private final SimpMessagingTemplate messagingTemplate;
+    private final DuelService duelService;
 
     /** Maps sessionId → userId for disconnect event lookups */
     private final ConcurrentHashMap<String, UUID> sessionUserMap = new ConcurrentHashMap<>();
@@ -128,39 +129,34 @@ public class MatchmakingService {
     }
 
     /**
-     * Notifies both matched players via their private STOMP queues.
-     * Each player receives the OTHER player's username.
+     * Delegates duel creation to DuelService.
+     * DuelService handles: challenge selection, DB persistence, STOMP notifications.
      */
     private void notifyMatch(
             WaitingRoom.QueueEntry player1,
             WaitingRoom.QueueEntry player2,
             DifficultyLevel difficulty
     ) {
-        String matchId = UUID.randomUUID().toString();
+        log.info("Match found: {} vs {} at {} difficulty. Creating duel...",
+                player1.username(), player2.username(), difficulty);
 
-        log.info("Match created [{}]: {} vs {} at {} difficulty",
-                matchId, player1.username(), player2.username(), difficulty);
-
-        // Notify player 1 → receives player 2's username
-        messagingTemplate.convertAndSendToUser(
-                player1.username(),
-                "/queue/matchmaking",
-                MatchFoundMessage.builder()
-                        .matchId(matchId)
-                        .opponentUsername(player2.username())
-                        .difficulty(difficulty)
-                        .build()
-        );
-
-        // Notify player 2 → receives player 1's username
-        messagingTemplate.convertAndSendToUser(
-                player2.username(),
-                "/queue/matchmaking",
-                MatchFoundMessage.builder()
-                        .matchId(matchId)
-                        .opponentUsername(player1.username())
-                        .difficulty(difficulty)
-                        .build()
-        );
+        try {
+            UUID duelId = duelService.createDuel(
+                    player1.userId(), player1.username(),
+                    player2.userId(), player2.username(),
+                    difficulty
+            );
+            log.info("Duel [{}] created and players notified.", duelId);
+        } catch (Exception e) {
+            log.error("Failed to create duel for {} vs {}: {}",
+                    player1.username(), player2.username(), e.getMessage(), e);
+            // Notify both players of the error
+            messagingTemplate.convertAndSendToUser(
+                    player1.username(), "/queue/errors",
+                    java.util.Map.of("message", "Failed to create duel. Please try again."));
+            messagingTemplate.convertAndSendToUser(
+                    player2.username(), "/queue/errors",
+                    java.util.Map.of("message", "Failed to create duel. Please try again."));
+        }
     }
 }
