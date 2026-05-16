@@ -10,9 +10,10 @@ const codeEditor = {
     /**
      * Initialize Monaco editor inside the given container element.
      * @param {string} containerId - DOM id of the editor container
+     * @param {object} options - Optional configuration (e.g., disableCopyPaste)
      * @returns {Promise<void>}
      */
-    init(containerId) {
+    init(containerId, options = {}) {
         return new Promise((resolve, reject) => {
             if (this.instance) {
                 resolve();
@@ -49,24 +50,54 @@ const codeEditor = {
                     },
                 });
 
+                const editorConfig = {
+                    value: '# Write your Python solution here\n\n',
+                    language: 'python',
+                    theme: 'codeduel-dark',
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    fontSize: 14,
+                    lineHeight: 22,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    padding: { top: 16, bottom: 16 },
+                    renderLineHighlight: 'all',
+                    tabSize: 4,
+                    wordWrap: 'on',
+                };
+
+                if (options.disableCopyPaste) {
+                    editorConfig.contextmenu = false; // Disable right-click menu
+                }
+
                 this.instance = monaco.editor.create(
                     document.getElementById(containerId),
-                    {
-                        value: '# Write your Python solution here\n\n',
-                        language: 'python',
-                        theme: 'codeduel-dark',
-                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                        fontSize: 14,
-                        lineHeight: 22,
-                        minimap: { enabled: false },
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                        padding: { top: 16, bottom: 16 },
-                        renderLineHighlight: 'all',
-                        tabSize: 4,
-                        wordWrap: 'on',
-                    }
+                    editorConfig
                 );
+
+                if (options.disableCopyPaste) {
+                    const container = document.getElementById(containerId);
+                    
+                    // Prevent DOM events
+                    const preventEvent = (e) => {
+                        e.preventDefault();
+                    };
+                    
+                    container.addEventListener('copy', preventEvent);
+                    container.addEventListener('cut', preventEvent);
+                    container.addEventListener('paste', preventEvent);
+                    
+                    // Intercept keyboard shortcuts inside Monaco
+                    this.instance.onKeyDown((e) => {
+                        if ((e.ctrlKey || e.metaKey) && 
+                           (e.keyCode === monaco.KeyCode.KeyC || 
+                            e.keyCode === monaco.KeyCode.KeyV || 
+                            e.keyCode === monaco.KeyCode.KeyX)) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    });
+                }
 
                 this.ready = true;
                 resolve();

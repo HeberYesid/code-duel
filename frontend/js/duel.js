@@ -56,7 +56,7 @@ const duelApp = {
         this._updateHudScores();
 
         // Init Monaco editor
-        await codeEditor.init('duel-editor-container');
+        await codeEditor.init('duel-editor-container', { disableCopyPaste: true });
         codeEditor.setValue('# Write your Python solution here\n\n');
 
         // Clear results
