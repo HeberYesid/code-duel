@@ -46,7 +46,7 @@ const challengesApp = {
                 </div>
                 <p class="challenge-desc">${this.escapeHtml(c.description.substring(0, 120))}${c.description.length > 120 ? '...' : ''}</p>
                 <div class="challenge-footer">
-                    <button class="btn-primary btn-sm" onclick="alert('Phase 3: Code Execution Coming Soon!')">Solve Challenge</button>
+                    <button class="btn-primary btn-sm" onclick="practiceApp.open('${c.id}')">Solve Challenge</button>
                 </div>
             </div>
         `).join('');
