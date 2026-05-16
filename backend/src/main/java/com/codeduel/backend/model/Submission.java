@@ -41,6 +41,10 @@ public class Submission {
     @Column(name = "overall_status", nullable = false, length = 30)
     private SubmissionStatus overallStatus;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "duel_id")
+    private Duel duel;
+
     @Column(name = "execution_time_ms")
     private Integer executionTimeMs;
 
