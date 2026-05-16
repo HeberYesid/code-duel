@@ -24,3 +24,15 @@ jwt:
 
 server:
   port: 8080
+
+code-execution:
+  docker:
+    image: python:3.12-alpine
+    memory-limit: 128m
+    cpu-limit: "0.5"
+    pids-limit: 50
+  timeouts:
+    easy: 3
+    medium: 5
+    hard: 10
+  container-timeout-buffer: 5
