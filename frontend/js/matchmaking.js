@@ -172,8 +172,8 @@ const matchmakingApp = {
             if (countdown <= 0) {
                 clearInterval(this._countdownInterval);
                 this._countdownInterval = null;
-                // TODO Phase 5: navigateTo('duel', data.matchId);
-                console.log('[Matchmaking] Countdown complete. Ready for Phase 5 redirect.', data.matchId);
+                // Navigate to duel arena with match data
+                navigateTo('duel', data);
             }
         }, 1000);
     },

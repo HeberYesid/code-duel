@@ -8,10 +8,18 @@
  */
 let _currentView = null;
 
-function navigateTo(viewName) {
+function navigateTo(viewName, data) {
     // Clean up previous view resources
-    if (_currentView === 'arena' && viewName !== 'arena') {
+    if (_currentView === 'arena' && viewName !== 'arena' && viewName !== 'duel') {
+        // Only destroy matchmaking if NOT going to duel (WS stays connected)
         matchmakingApp.destroy();
+    }
+    if (_currentView === 'duel' && viewName !== 'duel') {
+        duelApp.destroy();
+        // Disconnect WebSocket when leaving duel (unless going back to arena)
+        if (viewName !== 'arena') {
+            ws.disconnect();
+        }
     }
 
     _currentView = viewName;
@@ -34,6 +42,10 @@ function navigateTo(viewName) {
 
     if (viewName === 'arena') {
         matchmakingApp.init();
+    }
+
+    if (viewName === 'duel' && data) {
+        duelApp.init(data);
     }
 }
 

@@ -194,6 +194,67 @@
             <div id="arena-error" class="arena-error" style="display:none;"></div>
         </main>
     </div>
+    <!-- Duel View (Phase 5: Live Arena) -->
+    <div id="duel-view" class="view">
+        <!-- HUD Bar -->
+        <div class="duel-hud" id="duel-hud">
+            <div class="hud-player hud-self">
+                <span class="hud-label">You</span>
+                <div class="hud-progress">
+                    <div class="hud-progress-bar hud-progress-self" id="hud-self-bar" style="width:0%"></div>
+                </div>
+                <span class="hud-score" id="hud-self-score">0/0</span>
+            </div>
+            <div class="hud-center">
+                <span class="hud-timer" id="duel-timer">20:00</span>
+                <span class="hud-vs">VS</span>
+            </div>
+            <div class="hud-player hud-opponent">
+                <span class="hud-label" id="hud-opponent-name">Opponent</span>
+                <div class="hud-progress">
+                    <div class="hud-progress-bar hud-progress-opponent" id="hud-opponent-bar" style="width:0%"></div>
+                </div>
+                <span class="hud-score" id="hud-opponent-score">0/0</span>
+                <span class="opponent-activity-dot" id="opponent-activity" title="Recent activity"></span>
+            </div>
+        </div>
+
+        <main class="duel-layout">
+            <!-- Left: Challenge Info -->
+            <section class="duel-panel duel-info-panel">
+                <div id="duel-challenge-info">
+                    <div class="loader-container"><div class="pulse-dot"></div><span>Loading challenge...</span></div>
+                </div>
+            </section>
+
+            <!-- Right: Editor + Submit -->
+            <section class="duel-panel duel-editor-panel">
+                <div class="editor-toolbar">
+                    <span class="editor-lang-label">🐍 Python</span>
+                    <button id="duel-submit-btn" class="btn-run" onclick="duelApp.submitCode()">
+                        ▶ Submit Code
+                    </button>
+                </div>
+                <div id="duel-editor-container" class="editor-container"></div>
+            </section>
+
+            <!-- Bottom: Results -->
+            <section class="duel-panel duel-results-panel">
+                <div id="duel-results"></div>
+            </section>
+        </main>
+
+        <!-- End-of-Match Modal -->
+        <div class="end-modal-overlay" id="duel-end-overlay" style="display:none;">
+            <div class="end-modal" id="duel-end-modal">
+                <div class="end-modal-icon" id="end-modal-icon"></div>
+                <h2 class="end-modal-title" id="end-modal-title"></h2>
+                <p class="end-modal-reason" id="end-modal-reason"></p>
+                <div class="end-modal-scores" id="end-modal-scores"></div>
+                <button class="btn-primary" onclick="duelApp.goToDashboard()">Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Practice View -->
     <div id="practice-view" class="view">
@@ -241,6 +302,7 @@
     <script src="js/practice.js"></script>
     <script src="js/websocket.js"></script>
     <script src="js/matchmaking.js"></script>
+    <script src="js/duel.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
