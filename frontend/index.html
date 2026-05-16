@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/lib/stomp.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
 </head>
 <body>
@@ -84,6 +85,9 @@
             </div>
             <div class="nav-user">
                 <span id="nav-username" class="nav-username"></span>
+                <button class="btn-arena" onclick="navigateTo('arena')">
+                    ⚔️ Arena
+                </button>
                 <button id="logout-btn" class="btn-ghost" onclick="handleLogout()">Logout</button>
             </div>
         </nav>
@@ -111,6 +115,83 @@
                     <!-- Challenges will be injected here -->
                 </div>
             </div>
+        </main>
+    </div>
+
+    <!-- Arena View (Phase 4: Matchmaking) -->
+    <div id="arena-view" class="view">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <button class="btn-back" onclick="matchmakingApp.destroy(); navigateTo('dashboard')">
+                    ← Back
+                </button>
+                <span class="nav-icon">&lt;/&gt;</span>
+                <span class="nav-title">Code<span class="brand-accent">Duel</span></span>
+            </div>
+            <div class="nav-user">
+                <span class="nav-arena-label">⚔️ Arena</span>
+            </div>
+        </nav>
+
+        <main class="arena-content" id="arena-content">
+            <!-- State: IDLE — Difficulty Selector -->
+            <div class="arena-section arena-idle">
+                <div class="arena-header">
+                    <h2>Arena de Duelos</h2>
+                    <p>Select a difficulty and find an opponent to duel</p>
+                </div>
+
+                <div class="difficulty-selector">
+                    <button class="difficulty-card difficulty-easy" onclick="matchmakingApp.searchMatch('EASY')">
+                        <span class="diff-icon">🟢</span>
+                        <span class="diff-label">Easy</span>
+                        <span class="diff-desc">Warm up your skills</span>
+                    </button>
+                    <button class="difficulty-card difficulty-medium" onclick="matchmakingApp.searchMatch('MEDIUM')">
+                        <span class="diff-icon">🟡</span>
+                        <span class="diff-label">Medium</span>
+                        <span class="diff-desc">Test your knowledge</span>
+                    </button>
+                    <button class="difficulty-card difficulty-hard" onclick="matchmakingApp.searchMatch('HARD')">
+                        <span class="diff-icon">🔴</span>
+                        <span class="diff-label">Hard</span>
+                        <span class="diff-desc">Prove your mastery</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- State: SEARCHING — Timer + Cancel -->
+            <div class="arena-section arena-searching">
+                <div class="searching-container">
+                    <div class="searching-pulse-ring"></div>
+                    <div class="searching-content">
+                        <h2>Searching for opponent...</h2>
+                        <span id="searching-difficulty" class="searching-badge">EASY</span>
+                        <div class="search-timer-display">
+                            <span id="search-timer" class="search-timer">00:00</span>
+                        </div>
+                        <button class="btn-cancel" onclick="matchmakingApp.cancelSearch()">
+                            Cancel Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- State: MATCHED — Opponent found + Countdown -->
+            <div class="arena-section arena-matched">
+                <div class="match-found-container">
+                    <h2 class="match-found-title">⚔️ Opponent Found!</h2>
+                    <div id="match-difficulty" class="match-diff-badge"></div>
+                    <div id="match-players" class="match-players"></div>
+                    <div class="match-countdown">
+                        <p>Preparing arena...</p>
+                        <span id="match-countdown-number" class="countdown-number">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error message (shared across states) -->
+            <div id="arena-error" class="arena-error" style="display:none;"></div>
         </main>
     </div>
 
@@ -158,6 +239,8 @@
     <script src="js/challenges.js"></script>
     <script src="js/editor.js"></script>
     <script src="js/practice.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/matchmaking.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
