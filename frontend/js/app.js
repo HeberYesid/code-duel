@@ -34,7 +34,9 @@ function navigateTo(viewName, data) {
         const username = api.getUsername();
         document.getElementById('nav-username').textContent = username;
         document.getElementById('welcome-username').textContent = username;
-        
+
+        dashboardApp.init();
+        dashboardApp.loadDashboard();
         // Load challenges when dashboard is opened
         challengesApp.init();
         challengesApp.loadChallenges();
@@ -46,6 +48,10 @@ function navigateTo(viewName, data) {
 
     if (viewName === 'duel' && data) {
         duelApp.init(data);
+    }
+
+    if (viewName !== 'dashboard') {
+        dashboardApp.closeNotifications();
     }
 }
 

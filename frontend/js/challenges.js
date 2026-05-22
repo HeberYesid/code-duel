@@ -4,8 +4,11 @@
 
 const challengesApp = {
     container: null,
+    _initialized: false,
     
     init() {
+        if (this._initialized) return;
+
         this.container = document.getElementById('challenges-grid');
         this.filterSelect = document.getElementById('difficulty-filter');
         
@@ -14,6 +17,8 @@ const challengesApp = {
                 this.loadChallenges(e.target.value);
             });
         }
+
+        this._initialized = true;
     },
 
     async loadChallenges(difficulty = '') {
