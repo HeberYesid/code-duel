@@ -4,9 +4,13 @@ import com.codeduel.backend.dto.ChallengeRequest;
 import com.codeduel.backend.dto.TestCaseRequest;
 import com.codeduel.backend.model.Challenge;
 import com.codeduel.backend.model.TestCase;
+import com.codeduel.backend.model.User;
 import com.codeduel.backend.model.enums.DifficultyLevel;
 import com.codeduel.backend.model.enums.ProgrammingLanguage;
 import com.codeduel.backend.repository.ChallengeRepository;
+import com.codeduel.backend.repository.NotificationRepository;
+import com.codeduel.backend.repository.ProfileRepository;
+import com.codeduel.backend.repository.ScoreEntryRepository;
 import com.codeduel.backend.repository.UserRepository;
 import com.codeduel.backend.security.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,14 +42,30 @@ class ChallengeControllerIntegrationTest {
     private ChallengeRepository challengeRepository;
     @Autowired
     private JwtService jwtService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
+    private ScoreEntryRepository scoreEntryRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     private String authToken;
 
     @BeforeEach
     void setUp() {
+        notificationRepository.deleteAll();
+        scoreEntryRepository.deleteAll();
+        profileRepository.deleteAll();
+        userRepository.deleteAll();
         challengeRepository.deleteAll();
-        // Generate a valid JWT for authenticated requests
-        authToken = "Bearer " + jwtService.generateToken(UUID.randomUUID(), "testadmin");
+        User user = userRepository.save(User.builder()
+                .username("testadmin")
+                .email("testadmin@test.com")
+                .passwordHash("hash")
+                .build());
+        authToken = "Bearer " + jwtService.generateToken(user.getId(), user.getUsername());
     }
 
     private Challenge seedChallenge(String title, DifficultyLevel difficulty) {
