@@ -45,6 +45,7 @@ public class DuelService {
     private final CodeExecutionService codeExecutionService;
     private final SimpMessagingTemplate messagingTemplate;
     private final TransactionTemplate transactionTemplate;
+    private final RankingService rankingService;
 
     private static final int DUEL_TIMEOUT_MINUTES = 20;
     private static final int DISCONNECT_GRACE_SECONDS = 30;
@@ -272,6 +273,10 @@ public class DuelService {
         if (winnerId != null) {
             winner = userRepository.findById(winnerId).orElse(null);
             duel.setWinner(winner);
+        }
+        if (!duel.isRankingProcessed()) {
+            rankingService.processDuelResult(duel);
+            duel.setRankingProcessed(true);
         }
         duelRepository.save(duel);
 

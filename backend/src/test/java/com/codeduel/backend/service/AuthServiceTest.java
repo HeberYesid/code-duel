@@ -6,6 +6,7 @@ import com.codeduel.backend.dto.RegisterRequest;
 import com.codeduel.backend.exception.BadRequestException;
 import com.codeduel.backend.model.User;
 import com.codeduel.backend.repository.ProfileRepository;
+import com.codeduel.backend.repository.ScoreEntryRepository;
 import com.codeduel.backend.repository.UserRepository;
 import com.codeduel.backend.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,8 @@ class AuthServiceTest {
     private UserRepository userRepository;
     @Mock
     private ProfileRepository profileRepository;
+    @Mock
+    private ScoreEntryRepository scoreEntryRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
@@ -154,6 +157,26 @@ class AuthServiceTest {
             authService.register(validRegisterRequest);
 
             verify(profileRepository, times(1)).save(any());
+        }
+
+        @Test
+        @DisplayName("Should create an initial ScoreEntry when registering a new user")
+        void register_ShouldCreateInitialScoreEntry() {
+            when(userRepository.existsByUsername(anyString())).thenReturn(false);
+            when(userRepository.existsByEmail(anyString())).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("hashed");
+            User savedUser = User.builder()
+                    .id(UUID.randomUUID())
+                    .username("testuser")
+                    .email("test@example.com")
+                    .passwordHash("hashed")
+                    .build();
+            when(userRepository.save(any(User.class))).thenReturn(savedUser);
+            when(jwtService.generateToken(any(UUID.class), anyString())).thenReturn("token");
+
+            authService.register(validRegisterRequest);
+
+            verify(scoreEntryRepository, times(1)).save(any());
         }
     }
 

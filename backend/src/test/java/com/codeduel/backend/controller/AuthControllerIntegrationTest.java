@@ -2,6 +2,9 @@ package com.codeduel.backend.controller;
 
 import com.codeduel.backend.dto.LoginRequest;
 import com.codeduel.backend.dto.RegisterRequest;
+import com.codeduel.backend.repository.NotificationRepository;
+import com.codeduel.backend.repository.ProfileRepository;
+import com.codeduel.backend.repository.ScoreEntryRepository;
 import com.codeduel.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -29,9 +32,18 @@ class AuthControllerIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProfileRepository profileRepository;
+    @Autowired
+    private ScoreEntryRepository scoreEntryRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @BeforeEach
     void cleanDb() {
+        notificationRepository.deleteAll();
+        scoreEntryRepository.deleteAll();
+        profileRepository.deleteAll();
         userRepository.deleteAll();
     }
 

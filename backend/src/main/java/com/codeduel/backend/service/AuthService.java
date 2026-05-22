@@ -5,8 +5,10 @@ import com.codeduel.backend.dto.LoginRequest;
 import com.codeduel.backend.dto.RegisterRequest;
 import com.codeduel.backend.exception.BadRequestException;
 import com.codeduel.backend.model.Profile;
+import com.codeduel.backend.model.ScoreEntry;
 import com.codeduel.backend.model.User;
 import com.codeduel.backend.repository.ProfileRepository;
+import com.codeduel.backend.repository.ScoreEntryRepository;
 import com.codeduel.backend.repository.UserRepository;
 import com.codeduel.backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ScoreEntryRepository scoreEntryRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -53,6 +56,11 @@ public class AuthService {
                 .user(user)
                 .build();
         profileRepository.save(profile);
+
+        ScoreEntry scoreEntry = ScoreEntry.builder()
+                .user(user)
+                .build();
+        scoreEntryRepository.save(scoreEntry);
 
         String token = jwtService.generateToken(user.getId(), user.getUsername());
 

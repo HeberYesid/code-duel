@@ -58,6 +58,10 @@ public class Duel {
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
+    @Column(name = "ranking_processed", nullable = false)
+    @Builder.Default
+    private boolean rankingProcessed = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
