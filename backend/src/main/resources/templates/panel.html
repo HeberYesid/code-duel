@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración para la gestión de solicitudes del sistema Code Duel.">
+    <title>Panel de Administración de Solicitudes — Code Duel</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-purple {
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
+
+    <!-- Background Decorative Elements -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-blue-900/10 blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+        
+        <!-- Header -->
+        <header class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-800 pb-8">
+            <div>
+                <div class="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-purple-400 mb-1">
+                    <span>Área Administrativa</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span>
+                    <span>En Vivo</span>
+                </div>
+                <h1 id="main-title" class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-white via-slate-200 to-purple-400 bg-clip-text text-transparent">
+                    Panel de Solicitudes
+                </h1>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center space-x-3">
+                <span class="px-3 py-1.5 text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 rounded-lg">
+                    Rol: Administrador
+                </span>
+            </div>
+        </header>
+
+        <!-- KPI Cards Grid -->
+        <section aria-label="Indicadores de solicitudes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <!-- Total Card -->
+            <div id="kpi-total" class="glass glow-purple p-6 rounded-2xl transition duration-300 hover:scale-[1.02] hover:border-purple-500/30 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total General</p>
+                    <h3 th:text="${total}" class="text-4xl font-extrabold text-white mt-2 tracking-tight">0</h3>
+                </div>
+                <div class="mt-4 text-xs text-purple-400 font-medium">Todas las solicitudes radicadas</div>
+            </div>
+
+            <!-- Pending Card -->
+            <div id="kpi-pending" class="glass p-6 rounded-2xl transition duration-300 hover:scale-[1.02] hover:border-amber-500/30 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pendientes</p>
+                    <h3 th:text="${pendientes}" class="text-4xl font-extrabold text-amber-400 mt-2 tracking-tight">0</h3>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-amber-500/80 font-medium">
+                    <span class="w-2 h-2 bg-amber-500 rounded-full mr-1.5 animate-pulse"></span>
+                    Requieren atención
+                </div>
+            </div>
+
+            <!-- Approved Card -->
+            <div id="kpi-approved" class="glass p-6 rounded-2xl transition duration-300 hover:scale-[1.02] hover:border-emerald-500/30 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Aprobadas</p>
+                    <h3 th:text="${aprobadas}" class="text-4xl font-extrabold text-emerald-400 mt-2 tracking-tight">0</h3>
+                </div>
+                <div class="mt-4 text-xs text-emerald-500/80 font-medium">Resueltas favorablemente</div>
+            </div>
+
+            <!-- Rejected Card -->
+            <div id="kpi-rejected" class="glass p-6 rounded-2xl transition duration-300 hover:scale-[1.02] hover:border-rose-500/30 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rechazadas</p>
+                    <h3 th:text="${rechazadas}" class="text-4xl font-extrabold text-rose-400 mt-2 tracking-tight">0</h3>
+                </div>
+                <div class="mt-4 text-xs text-rose-500/80 font-medium">No aprobadas o rechazadas</div>
+            </div>
+        </section>
+
+        <!-- Requests Table -->
+        <main class="glass rounded-2xl overflow-hidden border border-slate-800">
+            <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+                <h2 id="table-title" class="text-lg font-bold text-white">Listado de Solicitudes</h2>
+                <span th:text="${solicitudes.size()} + ' solicitudes en total'" class="text-xs text-slate-400 bg-slate-800 px-2.5 py-1 rounded-full border border-slate-700">0 solicitudes</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="solicitudes-table">
+                    <thead>
+                        <tr class="border-b border-slate-800 bg-slate-900/20 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                            <th class="py-4 px-6">Solicitante</th>
+                            <th class="py-4 px-6">Tipo</th>
+                            <th class="py-4 px-6">Descripción</th>
+                            <th class="py-4 px-6">Estado</th>
+                            <th class="py-4 px-6">Fecha de Creación</th>
+                            <th class="py-4 px-6">Observación / Respuesta</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-sm">
+                        <!-- Row template -->
+                        <tr th:each="solicitud : ${solicitudes}" class="hover:bg-slate-900/30 transition-colors duration-150">
+                            <!-- Solicitante -->
+                            <td class="py-4 px-6 font-semibold text-slate-200" th:text="${solicitud.solicitante}">usuario</td>
+                            
+                            <!-- Tipo -->
+                            <td class="py-4 px-6">
+                                <span th:text="${solicitud.tipoSolicitud}" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">TIPO</span>
+                            </td>
+                            
+                            <!-- Descripción -->
+                            <td class="py-4 px-6 text-slate-300 max-w-xs truncate hover:text-clip hover:whitespace-normal" th:text="${solicitud.descripcion}">descripcion</td>
+                            
+                            <!-- Estado -->
+                            <td class="py-4 px-6">
+                                <span th:if="${#strings.equals(solicitud.estado, 'PENDIENTE')}" 
+                                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400/10 text-amber-400 border border-amber-500/20">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-amber-400 rounded-full animate-pulse"></span>
+                                    PENDIENTE
+                                </span>
+                                <span th:if="${#strings.equals(solicitud.estado, 'APROBADA')}" 
+                                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-400/10 text-emerald-400 border border-emerald-500/20">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full"></span>
+                                    APROBADA
+                                </span>
+                                <span th:if="${#strings.equals(solicitud.estado, 'RECHAZADA')}" 
+                                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-400/10 text-rose-400 border border-rose-500/20">
+                                    <span class="w-1.5 h-1.5 mr-1.5 bg-rose-400 rounded-full"></span>
+                                    RECHAZADA
+                                </span>
+                            </td>
+                            
+                            <!-- Fecha Creación -->
+                            <td class="py-4 px-6 text-slate-400 text-xs" 
+                                th:text="${#temporals.format(solicitud.fechaCreacion, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td>
+                            
+                            <!-- Observación -->
+                            <td class="py-4 px-6">
+                                <span th:if="${#strings.isEmpty(solicitud.observacion)}" class="text-slate-500 italic text-xs">Sin observación</span>
+                                <span th:if="${!#strings.isEmpty(solicitud.observacion)}" th:text="${solicitud.observacion}" class="text-slate-300 font-medium">observacion</span>
+                            </td>
+                        </tr>
+                        
+                        <!-- Empty State -->
+                        <tr th:if="${solicitudes.isEmpty()}">
+                            <td colspan="6" class="py-12 text-center text-slate-500 font-medium italic">
+                                No se encontraron solicitudes registradas en el sistema.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
