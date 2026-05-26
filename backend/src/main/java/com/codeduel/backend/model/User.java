@@ -32,6 +32,10 @@ public class User {
     @Builder.Default
     private Integer level = 1;
 
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private String role = "USER";
+
     @CreationTimestamp
     @Column(name = "date_created", nullable = false, updatable = false)
     private LocalDateTime dateCreated;
