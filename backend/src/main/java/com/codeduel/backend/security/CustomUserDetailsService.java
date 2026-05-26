@@ -2,6 +2,7 @@ package com.codeduel.backend.security;
 
 import com.codeduel.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new User(
                 user.getUsername(),
                 user.getPasswordHash(),
-                Collections.emptyList()
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
     }
 }
