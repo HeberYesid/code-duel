@@ -1,0 +1,22 @@
+ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'USER';
+
+CREATE TABLE mensajes (
+    id UUID PRIMARY KEY,
+    emisor_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    receptor_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    asunto VARCHAR(255) NOT NULL,
+    contenido TEXT NOT NULL,
+    leido BOOLEAN NOT NULL DEFAULT FALSE,
+    fecha_envio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE solicitudes (
+    id UUID PRIMARY KEY,
+    solicitante_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    tipo_solicitud VARCHAR(20) NOT NULL CHECK (tipo_solicitud IN ('SOPORTE', 'ACCESO', 'INFORMACIÓN')),
+    descripcion TEXT NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE' CHECK (estado IN ('PENDIENTE', 'APROBADA', 'RECHAZADA')),
+    observacion TEXT,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_resolucion TIMESTAMP
+);
