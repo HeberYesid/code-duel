@@ -49,3 +49,39 @@ Si vas a tocar este código, primero lee y entiende los conceptos. La arquitectu
 
 ---
 *Construido con pasión, enfoque en los fundamentos y cero magia negra.*
+
+## 📝 Módulos del Examen Final (Previo-Final-Código)
+
+Se han implementado los siguientes módulos para la entrega del examen final:
+
+### 1. Sistema de Mensajes Internos (Módulo 1)
+- Permite la mensajería privada entre usuarios de la plataforma almacenando la información de emisor, receptor, asunto, contenido, estado de lectura y fecha automática de envío en la base de datos.
+- **Endpoints**:
+  - `POST /api/mensajes`: Envía un mensaje a un destinatario. (Retorna 201)
+  - `GET /api/mensajes/bandeja-entrada`: Consulta recibidos para el usuario autenticado. (Retorna 200)
+  - `GET /api/mensajes/enviados`: Consulta enviados por el usuario autenticado. (Retorna 200)
+  - `PUT /api/mensajes/{id}/leer`: Marca un mensaje recibido como leído. (Retorna 200 o 404)
+  - `GET /api/mensajes/no-leidos/count`: Obtiene el conteo de no leídos. (Retorna 200 con `{"count": N}`)
+
+### 2. Flujo de Estados para Solicitudes (Módulo 2)
+- Gestión de peticiones de tipo `SOPORTE`, `ACCESO` o `INFORMACIÓN` asociadas a un solicitante, con ciclo de vida `PENDIENTE`, `APROBADA` o `RECHAZADA`.
+- **Endpoints**:
+  - `POST /api/solicitudes`: Radica una solicitud con estado inicial `PENDIENTE`. (Retorna 201)
+  - `GET /api/solicitudes/mis-solicitudes`: Consulta solicitudes del usuario actual. (Retorna 200)
+  - `GET /api/solicitudes`: Consulta global de solicitudes del sistema. (Solo administradores `ROLE_ADMIN`, Retorna 200)
+  - `PUT /api/solicitudes/{id}/aprobar`: Aprueba solicitud con observación. (Solo `ROLE_ADMIN`, Retorna 200)
+  - `PUT /api/solicitudes/{id}/rechazar`: Rechaza solicitud con observación. (Solo `ROLE_ADMIN`, Retorna 200)
+
+### 3. Panel de Administración Thymeleaf (Módulo 3)
+- Renderizado del lado del servidor en la ruta `GET /admin/solicitudes/panel`.
+- Protegido por roles: sólo accesible por usuarios con rol `ADMIN` (retorna HTTP 403 o redirige si el usuario no tiene permisos).
+- Incluye KPI cards con el conteo en tiempo real (Total, Pendientes, Aprobadas, Rechazadas) y una tabla interactiva con diseño de badges diferenciados por estado.
+
+### 4. Pruebas Automatizadas (Módulos 4 y 5)
+- **Pruebas unitarias de controlador**: Clase `MensajeControllerTest` utilizando `@WebMvcTest` y mockeando la capa de servicio con `@MockBean`.
+- **Pruebas de seguridad e integración**: Clase `SolicitudSecurityTest` levantando todo el contexto con `@SpringBootTest` y simulando roles a nivel de método con `@WithMockUser`.
+- Ejecución local con control de hilos para entornos Windows:
+  ```bash
+  mvn test -DforkCount=0
+  ```
+
