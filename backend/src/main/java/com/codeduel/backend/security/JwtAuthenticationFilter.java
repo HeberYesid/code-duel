@@ -29,14 +29,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        String jwt = null;
         final String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+        } else {
+            if (request.getCookies() != null) {
+                for (var cookie : request.getCookies()) {
+                    if ("JWT_TOKEN".equals(cookie.getName())) {
+                        jwt = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+            if (jwt == null) {
+                jwt = request.getParameter("token");
+            }
+        }
+
+        if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        final String jwt = authHeader.substring(7);
 
         try {
             final String username = jwtService.extractUsername(jwt);
