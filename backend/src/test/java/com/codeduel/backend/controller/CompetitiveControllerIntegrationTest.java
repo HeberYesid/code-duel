@@ -150,6 +150,8 @@ class CompetitiveControllerIntegrationTest {
                 .newElo(1016)
                 .read(true)
                 .build());
+        notificationRepository.flush();
+        Thread.sleep(50); // Ensure different createdAt timestamps for deterministic ordering
         notificationRepository.save(Notification.builder()
                 .user(user)
                 .type(NotificationType.RANK_CHANGE)
