@@ -28,6 +28,10 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private String role = "USER";
+
     @Column(nullable = false)
     @Builder.Default
     private Integer level = 1;
@@ -35,4 +39,7 @@ public class User {
     @CreationTimestamp
     @Column(name = "date_created", nullable = false, updatable = false)
     private LocalDateTime dateCreated;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Profile profile;
 }

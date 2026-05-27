@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.http.HttpMethod;
 import java.util.List;
 
 @Configuration
@@ -38,6 +39,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/api/mensajes/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/solicitudes").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes/mis-solicitudes").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/solicitudes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/aprobar").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/solicitudes/*/rechazar").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
