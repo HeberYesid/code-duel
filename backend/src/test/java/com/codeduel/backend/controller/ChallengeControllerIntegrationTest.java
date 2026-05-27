@@ -6,6 +6,7 @@ import com.codeduel.backend.model.Challenge;
 import com.codeduel.backend.model.TestCase;
 import com.codeduel.backend.model.enums.DifficultyLevel;
 import com.codeduel.backend.model.enums.ProgrammingLanguage;
+import com.codeduel.backend.model.User;
 import com.codeduel.backend.repository.ChallengeRepository;
 import com.codeduel.backend.repository.UserRepository;
 import com.codeduel.backend.security.JwtService;
@@ -37,6 +38,8 @@ class ChallengeControllerIntegrationTest {
     @Autowired
     private ChallengeRepository challengeRepository;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private JwtService jwtService;
 
     private String authToken;
@@ -44,8 +47,18 @@ class ChallengeControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         challengeRepository.deleteAll();
+        
+        String uniqueUsername = "testadmin_" + UUID.randomUUID().toString().substring(0, 8);
+        User admin = User.builder()
+                .username(uniqueUsername)
+                .email(uniqueUsername + "@test.com")
+                .passwordHash("password")
+                .role("ADMIN")
+                .build();
+        userRepository.save(admin);
+        
         // Generate a valid JWT for authenticated requests
-        authToken = "Bearer " + jwtService.generateToken(UUID.randomUUID(), "testadmin");
+        authToken = "Bearer " + jwtService.generateToken(admin.getId(), uniqueUsername);
     }
 
     private Challenge seedChallenge(String title, DifficultyLevel difficulty) {
