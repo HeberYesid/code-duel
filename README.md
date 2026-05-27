@@ -2,7 +2,7 @@
 
 ¡Bienvenido a **Code Duel**! Una plataforma diseñada para aprender y competir resolviendo retos de programación en tiempo real. Este proyecto no usa frameworks mágicos en el frontend, sino que se basa en **FUNDAMENTOS SÓLIDOS**: Vanilla JS, CSS puro y un backend modular en Spring Boot con una capa de ejecución aislada en Docker.
 
-## 📚 Documentación
+##  Documentación
 
 Hemos preparado una documentación exhaustiva para que entiendas el **PORQUÉ** detrás de cada decisión, no solo el cómo. 
 Si vas a tocar este código, primero lee y entiende los conceptos. La arquitectura es sagrada.
@@ -12,7 +12,7 @@ Si vas a tocar este código, primero lee y entiende los conceptos. La arquitectu
 - [Frontend (Vanilla JS)](docs/frontend.md): Organización por módulos, inyección de dependencias manual y Monaco Editor.
 - [Motor de Ejecución (Docker)](docs/docker_code_execution.md): Cómo ejecutamos código de usuarios de forma segura usando contenedores efímeros.
 
-## 🚀 Cómo Empezar
+##  Cómo Empezar
 
 1. **Base de Datos:**
    Asegúrate de tener Docker instalado y levanta la base de datos PostgreSQL:
@@ -50,7 +50,7 @@ Si vas a tocar este código, primero lee y entiende los conceptos. La arquitectu
 ---
 *Construido con pasión, enfoque en los fundamentos y cero magia negra.*
 
-## 📝 Módulos del Examen Final (Previo-Final-Código)
+##  Módulos del Examen Final (Previo-Final-Código)
 
 Se han implementado los siguientes módulos para la entrega del examen final:
 
@@ -84,4 +84,38 @@ Se han implementado los siguientes módulos para la entrega del examen final:
   ```bash
   mvn test -DforkCount=0
   ```
+
+
+## Entrega (Examen final) — rama y verificación
+
+La entrega final para el examen se encuentra en la rama `previo-final-02230131027` (renombrada desde `previo-final-codigo`). En esta rama están implementados los módulos solicitados en el enunciado del examen: sistema de mensajes, flujo de solicitudes, panel administrativo Thymeleaf y las pruebas exigidas (`MensajeControllerTest` y `SolicitudSecurityTest`).
+
+Comandos útiles para comprobar localmente (ejecutar desde la raíz del proyecto):
+
+```powershell
+# Ir al directorio del repo
+Set-Location 'C:\Users\L&R\.gemini\antigravity\scratch\code-duel'
+
+# Levantar la base de datos y backend (si aún no están arriba)
+docker-compose up -d postgres
+cd backend
+mvn spring-boot:run
+
+# En otra terminal, ejecutar pruebas
+cd backend
+mvn test -DforkCount=0
+```
+
+Si necesitas confirmar la rama remota donde se subió la entrega:
+
+```powershell
+git fetch origin
+git branch -a
+git show-branch origin/previo-final-02230131027
+```
+
+Notas:
+- Los endpoints y códigos HTTP fueron validados manualmente (registro/login, envío/recepción de mensajes, radicación y resolución de solicitudes, y la página Thymeleaf para administradores).
+- Si algo falla al pushear la rama, revisa que tengas permisos sobre el remoto (origin) y que la URL del remoto esté configurada correctamente.
+
 
