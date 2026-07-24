@@ -14,7 +14,6 @@ import java.util.Map;
 @Setter
 public class CodeExecutionProperties {
 
-    private DockerConfig docker = new DockerConfig();
     private Map<DifficultyLevel, Integer> timeouts = Map.of(
             DifficultyLevel.EASY, 3,
             DifficultyLevel.MEDIUM, 5,
@@ -27,14 +26,5 @@ public class CodeExecutionProperties {
      */
     public int getTimeoutForDifficulty(DifficultyLevel difficulty) {
         return timeouts.getOrDefault(difficulty, 5);
-    }
-
-    @Getter
-    @Setter
-    public static class DockerConfig {
-        private String image = "python:3.12-alpine";
-        private String memoryLimit = "128m";
-        private String cpuLimit = "0.5";
-        private int pidsLimit = 50;
     }
 }

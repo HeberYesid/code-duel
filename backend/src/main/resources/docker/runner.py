@@ -1,17 +1,18 @@
 """
 Code Duel — Sandboxed test runner.
-Executed INSIDE the Docker container.
-Reads test cases from /app/test_cases.json, runs /app/solution.py for each,
+Reads test cases from test_cases.json, runs solution.py for each,
 and outputs a JSON array of results to stdout.
 """
+
 import subprocess
 import json
 import sys
 import time
 import os
 
-SOLUTION_PATH = "/app/solution.py"
-TEST_CASES_PATH = "/app/test_cases.json"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SOLUTION_PATH = os.path.join(SCRIPT_DIR, "solution.py")
+TEST_CASES_PATH = os.path.join(SCRIPT_DIR, "test_cases.json")
 
 
 def run_test(test_case, timeout_seconds):

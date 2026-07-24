@@ -28,7 +28,7 @@ public class CodeExecutionService {
     private final ObjectMapper objectMapper;
 
     /**
-     * Executes user code against all test cases in a sandboxed Docker container.
+     * Executes user code against all test cases using Python directly on the host.
      *
      * @param code       The user's Python source code
      * @param testCases  The test cases to run against
@@ -41,9 +41,9 @@ public class CodeExecutionService {
             tempDir = prepareTempDirectory(code, testCases);
             int perTestTimeout = config.getTimeoutForDifficulty(difficulty);
 
-            String containerOutput = runDockerContainer(tempDir, perTestTimeout, testCases.size());
+            String runnerOutput = runPythonDirectly(tempDir, perTestTimeout, testCases.size());
 
-            return parseAndEvaluateResults(containerOutput, testCases);
+            return parseAndEvaluateResults(runnerOutput, testCases);
         } catch (Exception e) {
             log.error("Code execution failed: {}", e.getMessage(), e);
             return buildErrorResults(testCases, e.getMessage());
@@ -80,36 +80,25 @@ public class CodeExecutionService {
     }
 
     /**
-     * Builds and executes the docker run command with all security constraints.
+     * Runs the Python runner directly on the host (no Docker sandbox).
      */
-    private String runDockerContainer(Path tempDir, int perTestTimeout, int testCount) throws Exception {
-        CodeExecutionProperties.DockerConfig docker = config.getDocker();
-
-        // Total timeout = (per-test * count) + buffer
+    private String runPythonDirectly(Path tempDir, int perTestTimeout, int testCount) throws Exception {
         int totalTimeoutSeconds = (perTestTimeout * testCount) + config.getContainerTimeoutBuffer();
 
-        List<String> command = new ArrayList<>(List.of(
-                "docker", "run", "--rm",
-                "--network", "none",
-                "--memory", docker.getMemoryLimit(),
-                "--cpus", docker.getCpuLimit(),
-                "--pids-limit", String.valueOf(docker.getPidsLimit()),
-                "--read-only",
-                "--tmpfs", "/tmp:size=10m",
-                "-v", tempDir.toAbsolutePath() + ":/app:ro",
-                "-e", "TEST_TIMEOUT=" + perTestTimeout,
-                docker.getImage(),
-                "python3", "/app/runner.py"
-        ));
+        Path runnerPath = tempDir.resolve("runner.py");
 
-        log.info("Executing Docker container with timeout={}s, image={}", totalTimeoutSeconds, docker.getImage());
-
-        ProcessBuilder pb = new ProcessBuilder(command);
+        ProcessBuilder pb = new ProcessBuilder(
+                findPythonCommand(),
+                runnerPath.toAbsolutePath().toString()
+        );
+        pb.directory(tempDir.toFile());
+        pb.environment().put("TEST_TIMEOUT", String.valueOf(perTestTimeout));
         pb.redirectErrorStream(false);
+
+        log.info("Executing Python runner with timeout={}s", totalTimeoutSeconds);
 
         Process process = pb.start();
 
-        // Read stdout and stderr
         String stdout = new String(process.getInputStream().readAllBytes());
         String stderr = new String(process.getErrorStream().readAllBytes());
 
@@ -117,18 +106,35 @@ public class CodeExecutionService {
 
         if (!finished) {
             process.destroyForcibly();
-            log.warn("Docker container timed out after {}s", totalTimeoutSeconds);
-            throw new RuntimeException("Container execution timed out");
+            log.warn("Python execution timed out after {}s", totalTimeoutSeconds);
+            throw new RuntimeException("Code execution timed out");
         }
 
         int exitCode = process.exitValue();
 
         if (exitCode != 0 && stdout.isBlank()) {
-            log.warn("Docker container exited with code {}: {}", exitCode, stderr);
-            throw new RuntimeException("Container error: " + stderr.trim());
+            log.warn("Python runner exited with code {}: {}", exitCode, stderr);
+            throw new RuntimeException("Execution error: " + stderr.trim());
         }
 
         return stdout;
+    }
+
+    /**
+     * Finds the available Python 3 executable on the host.
+     */
+    private String findPythonCommand() {
+        for (String cmd : List.of("python3", "python")) {
+            try {
+                ProcessBuilder pb = new ProcessBuilder(cmd, "--version");
+                Process p = pb.start();
+                if (p.waitFor(5, TimeUnit.SECONDS) && p.exitValue() == 0) {
+                    return cmd;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        throw new RuntimeException("Python 3 is not available on this system");
     }
 
     /**

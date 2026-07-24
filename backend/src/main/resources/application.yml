@@ -2,14 +2,14 @@ spring:
   application:
     name: code-duel-backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/codeduel
-    username: postgres
-    password: password # Cámbialo si es necesario
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/codeduel}
+    username: ${JDBC_DATABASE_USERNAME:postgres}
+    password: ${JDBC_DATABASE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -19,20 +19,19 @@ spring:
     locations: classpath:db/migration
 
 jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 86400000 # 24 hours en milisegundos
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 code-execution:
-  docker:
-    image: python:3.12-alpine
-    memory-limit: 128m
-    cpu-limit: "0.5"
-    pids-limit: 50
   timeouts:
     easy: 3
     medium: 5
     hard: 10
   container-timeout-buffer: 5
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500}
+  ws-allowed-origins: ${WS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500}

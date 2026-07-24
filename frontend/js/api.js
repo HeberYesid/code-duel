@@ -2,7 +2,7 @@
  * api.js — HTTP client wrapper with JWT interceptor.
  * All backend calls go through this module.
  */
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = window.CODE_DUEL_CONFIG?.apiBase || 'http://localhost:8080/api';
 
 const api = {
     /**

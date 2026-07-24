@@ -40,7 +40,8 @@ const ws = {
                 return;
             }
 
-            const brokerURL = `ws://localhost:8080/ws?token=${encodeURIComponent(token)}`;
+            const wsBase = window.CODE_DUEL_CONFIG?.wsBase || 'ws://localhost:8080/ws';
+            const brokerURL = `${wsBase}?token=${encodeURIComponent(token)}`;
 
             this._client = new StompJs.Client({
                 brokerURL: brokerURL,
