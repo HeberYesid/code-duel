@@ -6,32 +6,18 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: JDBC_DATABASE_HOST
-        fromDatabase:
-          name: code-duel-db
-          property: host
+        sync: false
       - key: JDBC_DATABASE_PORT
-        fromDatabase:
-          name: code-duel-db
-          property: port
+        value: "5432"
       - key: JDBC_DATABASE_NAME
-        fromDatabase:
-          name: code-duel-db
-          property: database
+        value: "neondb"
       - key: JDBC_DATABASE_USERNAME
-        fromDatabase:
-          name: code-duel-db
-          property: user
+        sync: false
       - key: JDBC_DATABASE_PASSWORD
-        fromDatabase:
-          name: code-duel-db
-          property: password
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ALLOWED_ORIGINS
         value: ""
       - key: WS_ALLOWED_ORIGINS
         value: ""
-
-databases:
-  - name: code-duel-db
-    plan: free
