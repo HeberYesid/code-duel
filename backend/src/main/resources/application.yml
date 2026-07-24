@@ -2,7 +2,7 @@ spring:
   application:
     name: code-duel-backend
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/codeduel}
+    url: jdbc:postgresql://${JDBC_DATABASE_HOST:localhost}:${JDBC_DATABASE_PORT:5432}/${JDBC_DATABASE_NAME:codeduel}
     username: ${JDBC_DATABASE_USERNAME:postgres}
     password: ${JDBC_DATABASE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver

@@ -5,10 +5,18 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: JDBC_DATABASE_URL
+      - key: JDBC_DATABASE_HOST
         fromDatabase:
           name: code-duel-db
-          property: jdbcUrl
+          property: host
+      - key: JDBC_DATABASE_PORT
+        fromDatabase:
+          name: code-duel-db
+          property: port
+      - key: JDBC_DATABASE_NAME
+        fromDatabase:
+          name: code-duel-db
+          property: database
       - key: JDBC_DATABASE_USERNAME
         fromDatabase:
           name: code-duel-db
